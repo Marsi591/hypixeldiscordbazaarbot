@@ -42,9 +42,9 @@ class BazaarCog(commands.Cog):
     async def bz(self, ctx, arg):
         if self.bazaar_data["success"]:
             await ctx.send(f"""{arg}
-        Buy Price: {bz_json["products"][arg]["quick_status"]["buyPrice"]:,} coins
-        Sell Price: {bz_json["products"][arg]["quick_status"]["sellPrice"]:,} coins
-        Sales in the past 7d: {bz_json["products"][arg]["quick_status"]["sellMovingWeek"]:,} 
+        Buy Price: {self.bazaar_data["products"][arg]["quick_status"]["buyPrice"]:,} coins
+        Sell Price: {self.bazaar_data["products"][arg]["quick_status"]["sellPrice"]:,} coins
+        Sales in the past 7d: {self.bazaar_data["products"][arg]["quick_status"]["sellMovingWeek"]:,} 
             
         """)
         else:
