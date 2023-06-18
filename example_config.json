@@ -3,8 +3,11 @@
     "discord_token"   : "YOUR TOKEN HERE",
     "hypixel_api" : {
         "url":"https://api.hypixel.net/",
+        "items" : {
+            "poll_rate" : 259200
+        },
         "auction_house" : {
-            "poll_rate":120
+            "poll_rate" : 120
         },
         "bazaar" : {
             "poll_rate"         : 120,

@@ -8,33 +8,62 @@ def api_request(path, **kwargs):
 
 class HypixelApi:
     def __init__(self):
+        self._items_obj
+        self._bazaar_obj
+        self._auction_house_obj
+
+    @property
+    def items(self):
+        if self._items_obj.is_aged:
+            self._items_obj = _get_items()
+        return self._items_obj
+
+    def _get_items(self):
+        return Items()
+
+    @property
+    def bazaar(self):
         pass
+
+    def _get_bazaar(self):
+        return Bazaar()
+
+    @property
+    def auction_house(self):
+        pass
+
+    def _get_auction_house(self):
+        
+        return AuctionHouse()
+
+class AgingMixin:
+    def __init__(self, max_age, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.creation_date = time.time()
+        self.max_age = max_age
+
+    @property
+    def is_aged():
+        return time.time() - creation_date >= self.max_age
+
+class Items(AgingMixin):
+            def __init__(self, hypixel_api):
+                super().__init__(GLOBAL_CONFIG["items"]["poll_rate"])
+                pass
+
+class Bazaar(AgingMixin):
+            def __init__(self, hypixel_api):
+                pass
+
+class AuctionHouse(AgingMixin):
+            def __init__(self, hypixel_api):
+                pass
 
 class Item:
-    def __init__(self):
-        pass
+    pass
 
-class Bazaar:
-    def __init__(self):
-        self.last_update = 0
-        self.data = None
-    
-    def _update_bazaar(self):
-        if time.time() - self.last_update > GLOBAL_CONFIG["hypixel_api"]["bazaar"]["poll_rate"]:
-            self.data = api_request("skyblock/bazaar")
+class BazaarItem(Item):
+    pass
 
-    @classmethod
-    def _ensured(fn):
-        def wrapper(self, *args, **kwargs):
-            self._update_bazaar()
-            fn(self, *args, **kwargs)
-        return wrapper
-    
-    @Bazaar._ensured
-    def get_item(self, item_id):
-        pass
-
-class AuctionHouse:
-    def __init__(self):
-        self.last_update = 0
-        self.data = None
+class AuctionableItem(Item):
+    pass
