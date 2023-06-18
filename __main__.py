@@ -94,5 +94,6 @@ class BazaarCog(commands.Cog):
         self.bazaar_data = requests.get(HYPIXEL_API_URL+"skyblock/bazaar").json()
         print(f"Success: {self.bazaar_data['success']}")
 
-bot.run(DISCORD_API_KEY)
 
+print('My nuts itch')
+bot.run(DISCORD_API_KEY)
