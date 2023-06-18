@@ -32,6 +32,7 @@ class BazaarCog(commands.Cog):
         self.bazaar_data = None
         self.settings = {
             "margin":500,
+            "volume":1000000,
         }
         self.updater.start()
 
@@ -78,10 +79,12 @@ class BazaarCog(commands.Cog):
         for i in list(self.bazaar_data["products"].keys()):
             quick_status = self.bazaar_data["products"][i]["quick_status"]
             margin = abs(quick_status["sellPrice"] - quick_status["buyPrice"])
+            volume = abs(quick_status["sellVolume"] + quick_status["buyVolume"])
             if margin > self.settings["margin"]:
-                await ctx.send(f"{i} has a margin of {math.floor(margin)} coins.")
-                await ctx.send(f"BUY: {quick_status['sellPrice']} SELL: {quick_status['sellPrice']}")
-                break
+                if volume > self.settings["volume"]:
+                    await ctx.send(f"{i} has a margin of {math.floor(margin)} coins.")
+                    await ctx.send(f"BUY: {quick_status['buyPrice']} SELL: {quick_status['sellPrice']}")
+        print('done')
 
 
     @commands.command()
