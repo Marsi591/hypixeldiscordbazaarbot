@@ -19,3 +19,13 @@ embed.add_field(
 embed.set_footer(
     text=ctx.created_at
 )
+
+
+
+embed.set_author(
+            name=ctx.author.display_name,
+            icon_url=ctx.author.avatar_url
+        )
+        embed.set_footer(
+            text=ctx.created_at
+        )
