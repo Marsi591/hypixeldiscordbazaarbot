@@ -6,9 +6,11 @@ import json
 import time
 import config
 import hypixel_api
+import random
 
 hypixel = hypixel_api.HypixelApi()
-
+responses = config.RESPONSES
+print(responses)
 intents = discord.Intents.default()
 intents.message_content = True
 prefix = config.GLOBAL_CONFIG["prefix"]
@@ -75,7 +77,7 @@ class BazaarCog(commands.Cog):
         new_search.add_limit("sellVolume", False, self.settings["volume"])
         results = new_search.finalize()
         embed = discord.Embed(
-            title="Here's your bazaar brief master ~",
+            title=random.choice(responses),
             color=0xb05b48,
         )
         embed.set_thumbnail(url=bot.user.avatar.url)
