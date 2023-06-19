@@ -42,7 +42,7 @@ class BazaarCog(commands.Cog):
         embed.set_footer(text=time.ctime(time.time()))
         embed.add_field(
             name=item.name,
-            value=f"BUY: {round(item.bz_price['buy'],2):,} coins\nSELL: {math.floor(item.bz_price['sell']):,} coins\n7d SALES: {math.floor(item.bz_moving_week['sell'])}"
+            value=f"BUY: {round(item.bz_price['buy'],2):,} coins\nSELL: {round(item.bz_price['sell'],2):,} coins\n7d SALES: {item.bz_moving_week['sell']:,}"
         )
         await ctx.send(embed=embed)
 
