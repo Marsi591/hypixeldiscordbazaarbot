@@ -64,11 +64,12 @@ class BazaarCog(commands.Cog):
     async def brief(self, ctx):
         await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         new_search = hypixel.bazaar.limit_search()
+        new_search.add_limit("margin", False, self.settings["margin"])
         new_search.add_limit("volume", False, self.settings["volume"])
         results = new_search.finalize()
         for i in results:
             await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
-            await ctx.send(f"BUY: {i.bz_price['sell']} SELL: {i.bz_price['sell']}")
+            await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):
