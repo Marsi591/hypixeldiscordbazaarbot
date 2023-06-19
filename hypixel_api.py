@@ -84,6 +84,7 @@ class Bazaar(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "skyblock/bazaar",
                          GLOBAL_CONFIG["items"]["poll_rate"])
+        self._inject_raw_data()
         self.item_ids = self._get_item_ids(self)
         self.items_dict = self._create_items_dict()
         self.property_list = [
@@ -94,7 +95,9 @@ class Bazaar(ApiComponentMixin, AgingMixin):
             "buyPrice",
             "buyVolume",
             "buyMovingWeek",
-            "buyOrders"
+            "buyOrders",
+            "margin",
+            "percentMargin"
         ]
 
     def _create_items_dict(self):
@@ -103,7 +106,7 @@ class Bazaar(ApiComponentMixin, AgingMixin):
     def _get_item_ids(self):
         item_ids = []
         for i in self.raw_data["products"]:
-            self.item_ids.append(i["productId"])
+            self.item_ids.append(i["product_id"])
         return item_ids
 
     def limit_search(self, bazaar_search):
@@ -112,19 +115,19 @@ class Bazaar(ApiComponentMixin, AgingMixin):
     def _do_limit_search(self, bazaar_search):
         results = []
         for product in self.raw_data["products"]:
+            product_item = self.api.items.get_item_by_id(product["product_id"])
             all_match = True
             for limit in bazaar_search.limits:
                 if limit["less_than"]:
-                    if not (product[limit["property"]] < limit["value"]):
+                    if not (product_item.get_bazaar_property(limit["property"]) < limit["value"]):
                         all_match = False
                         break
                 elif not limit["less_than"]:
-                    if not (product[limit["proprety"]] > limit["value"]):
+                    if not (product_item.get_bazaar_property(limit["property"]) > limit["value"]):
                         all_match = False
                         break
             if all_match:
-                results.append(
-                    self.api.items.get_item_by_id(product["productId"]))
+                results.append(product_item)
         return results
 
     def max_search(self, property_name):
@@ -133,7 +136,7 @@ class Bazaar(ApiComponentMixin, AgingMixin):
             for product in self.raw_data["products"]:
                 if result[property_name] < product[property_name]:
                     result = product
-            return self.api.get_item_by_id(result["productId"])
+            return self.api.get_item_by_id(result["product_id"])
         else:
             raise ValueError("Invalid property to search by")
 
@@ -221,6 +224,15 @@ class BazaarItem(Item):
             "sell": self.bz_data["sell_summary"],
         }
         self.is_in_bazaar = True
+
+    def get_bazaar_property(self, property_name):
+        quick_status = self.bz_data["quick_status"]
+        if property_name in list(quick_status.keys()):
+            return quick_status[property_name]
+        elif property_name == "percentMargin":
+            return self.bz_price["percent_margin"]
+        elif property_name == "margin":
+            return self.bz_price["margin"]
 
 
 class AuctionableItem(Item):

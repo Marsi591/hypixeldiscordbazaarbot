@@ -3,66 +3,53 @@ from discord.ext import commands, tasks
 import math
 import requests
 import json
+import config
+import hypixel_api
 
-with open("config.json") as config:
-    config_dict = json.load(config)
-    HYPIXEL_API_KEY = config_dict["hypixel-key"]
-    DISCORD_API_KEY = config_dict["discord-token"]
-
-HYPIXEL_API_URL = 'https://api.hypixel.net/'
-
-x = requests.get(HYPIXEL_API_URL + "key",params={"key":HYPIXEL_API_KEY})
-
-print(x.json())
+hypixel = hypixel_api.HypixelApi()
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='$',intents=intents)
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 bazaar_data = None
+
 
 @bot.event
 async def on_ready():
     await bot.add_cog(BazaarCog(bot))
 
+
 class BazaarCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bazaar_data = None
         self.settings = {
-            "margin":500,
-            "volume":1000000,
+            "margin": 500,
+            "volume": 1000000,
         }
-        self.updater.start()
-
-    def cog_unload(self):
-        self.updater.cancel()
 
     @commands.command()
     async def bz(self, ctx, arg):
-        if self.bazaar_data["success"]:
-            await ctx.send(f"""{arg}
-        Buy Price: {self.bazaar_data["products"][arg]["quick_status"]["buyPrice"]:,} coins
-        Sell Price: {self.bazaar_data["products"][arg]["quick_status"]["sellPrice"]:,} coins
-        Sales in the past 7d: {self.bazaar_data["products"][arg]["quick_status"]["sellMovingWeek"]:,} 
-            
+        item = hypixel.items.get_item_by_id(arg)
+        await ctx.send(f"""{item.name}
+        Buy Price: {item.bz_price["buy"]:,} coins
+        Sell Price: {item.bz_price["sell"]:,} coins
+        Sales in the past 7d: {item.bz_moving_week["sell"]:,} 
         """)
-        else:
-            await ctx.send("<@211979681774174209> Something went wrong fetching bazaar data!")
-    
+
     @commands.command()
     async def margin(self, ctx, ammount, t_type):
-        if t_type=="percent":
+        if t_type == "percent":
             ctx.send(f"Set margin tracker to {ammount}% of the total price.")
-        if t_type=="coins":
+        if t_type == "coins":
             ctx.send(f"Set margin tracker to {ammount}% coins.")
 
     @commands.command()
     async def spike(self, ctx, ammount, t_type):
-        if t_type=="percent":
+        if t_type == "percent":
             ctx.send(f"Set spike tracker to {ammount}% of the total price.")
-        if t_type=="coins":
+        if t_type == "coins":
             ctx.send(f"Set spike tracker to {ammount}% coins.")
 
     @commands.command()
@@ -72,31 +59,20 @@ class BazaarCog(commands.Cog):
     @commands.command()
     async def buy_volume(self, ctx, ammount):
         ctx.send(f"Set the tacker buy volume to {ammount} sellers.")
-    
+
     @commands.command()
     async def brief(self, ctx):
         await ctx.send(f"Here are the current items to look at based on the tracker settings:")
-        for i in list(self.bazaar_data["products"].keys()):
-            quick_status = self.bazaar_data["products"][i]["quick_status"]
-            margin = abs(quick_status["sellPrice"] - quick_status["buyPrice"])
-            volume = abs(quick_status["sellVolume"] + quick_status["buyVolume"])
-            if margin > self.settings["margin"]:
-                if volume > self.settings["volume"]:
-                    await ctx.send(f"{i} has a margin of {math.floor(margin)} coins.")
-                    await ctx.send(f"BUY: {quick_status['buyPrice']} SELL: {quick_status['sellPrice']}")
-        print('done')
-
+        new_search = hypixel.bazaar.limit_search()
+        new_search.add_limit("volume", False, self.settings["volume"])
+        results = new_search.finalize()
+        for i in results:
+            await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
+            await ctx.send(f"BUY: {i.bz_price['sell']} SELL: {i.bz_price['sell']}")
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):
         pass
 
-    @tasks.loop(seconds=120.0)
-    async def updater(self):
-        print("Updating bazaar data...")
-        self.bazaar_data = requests.get(HYPIXEL_API_URL+"skyblock/bazaar").json()
-        print(f"Success: {self.bazaar_data['success']}")
 
-
-print('My nuts itch')
 bot.run(DISCORD_API_KEY)
