@@ -25,9 +25,10 @@ class BazaarCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.settings = {
-            "margin": 500,
+            "margin": 250,
             "volume": 1000000,
         }
+        self.embed_list = ()
 
     @commands.command()
     async def bz(self, ctx, arg):
@@ -67,9 +68,23 @@ class BazaarCog(commands.Cog):
         new_search.add_limit("margin", False, self.settings["margin"])
         new_search.add_limit("sellVolume", False, self.settings["volume"])
         results = new_search.finalize()
+        embed = discord.Embed(
+            title="Bazaar margins",
+            color=0xb05b48
+        )
+        
         for i in results:
-            await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
-            await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
+            
+             
+            embed.add_field(
+            name=f"{i.name} has a margin of {math.floor(i.bz_price['margin']):,} coins",
+            value=f"BUY: {math.floor(i.bz_price['buy'])} SELL: {math.floor(i.bz_price['sell'])}",
+            inline=True
+            )
+            #await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
+            #await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
+        await ctx.send(embed=embed)
+        
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):
