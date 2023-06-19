@@ -70,8 +70,9 @@ class BazaarCog(commands.Cog):
         results = new_search.finalize()
         embed = discord.Embed(
             title="Bazaar margins",
-            color=0xb05b48
+            color=0xb05b48,
         )
+        embed.set_thumbnail(url=bot.user.avatar.url)
         
         for i in results:
             
