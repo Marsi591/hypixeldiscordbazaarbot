@@ -6,7 +6,7 @@ def save_config():
     pass
 
 def load_config_file():
-    with open("config.py") as cf:
+    with open("config.json") as cf:
         global GLOBAL_CONFIG
         GLOBAL_CONFIG = json.load(cf)
 
