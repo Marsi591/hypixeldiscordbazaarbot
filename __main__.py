@@ -10,8 +10,8 @@ hypixel = hypixel_api.HypixelApi()
 
 intents = discord.Intents.default()
 intents.message_content = True
-
-bot = commands.Bot(command_prefix='$', intents=intents)
+prefix = config.GLOBAL_CONFIG["prefix"]
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 bazaar_data = None
 
@@ -63,7 +63,6 @@ class BazaarCog(commands.Cog):
 
     @commands.command()
     async def brief(self, ctx):
-        await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         new_search = hypixel.bazaar.limit_search()
         new_search.add_limit("margin", False, self.settings["margin"])
         new_search.add_limit("sellVolume", False, self.settings["volume"])
