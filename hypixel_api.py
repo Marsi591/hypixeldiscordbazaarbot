@@ -16,18 +16,21 @@ class HypixelApi:
     @property
     def items(self):
         if self._items_obj.is_aged:
+            print("The item database was out of date, refetching...")
             self._items_obj = Items(self)
         return self._items_obj
 
     @property
     def bazaar(self):
         if self._bazaar_obj.is_aged:
+            print("The bazaar database was out of date, refetching...")
             self._bazaar_obj = Bazaar(self)
         return self._bazaar_obj
 
     @property
     def auction_house(self):
         if self._auction_house_obj.is_aged:
+            print("The auction house database was out of date, refetching...")
             self._auction_house_obj = AuctionHouse()
         return self._auction_house_object
 
