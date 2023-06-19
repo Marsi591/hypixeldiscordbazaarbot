@@ -65,7 +65,7 @@ class BazaarCog(commands.Cog):
         await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         new_search = hypixel.bazaar.limit_search()
         new_search.add_limit("margin", False, self.settings["margin"])
-        new_search.add_limit("volume", False, self.settings["volume"])
+        new_search.add_limit("sellVolume", False, self.settings["volume"])
         results = new_search.finalize()
         for i in results:
             await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
