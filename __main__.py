@@ -75,4 +75,4 @@ class BazaarCog(commands.Cog):
         pass
 
 
-bot.run(DISCORD_API_KEY)
+bot.run(config.GLOBAL_CONFIG["discord_token"])

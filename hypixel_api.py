@@ -6,11 +6,11 @@ from config import GLOBAL_CONFIG
 
 class HypixelApi:
     def __init__(self):
-        self._items_obj
-        self._bazaar_obj
-        self._auction_house_obj
+        self._items_obj = Items(self)
+        self._bazaar_obj = Bazaar(self)
+        self._auction_house_obj = None
 
-    def request(path, **kwargs):
+    def request(self, path, **kwargs):
         return requests.get(GLOBAL_CONFIG["hypixel_api"]["url"] + path, **kwargs).json()
 
     @property
@@ -54,7 +54,7 @@ class ApiComponentMixin:
 class Items(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "resources/skyblock/items",
-                         GLOBAL_CONFIG["items"]["poll_rate"])
+                         GLOBAL_CONFIG["hypixel_api"]["items"]["poll_rate"])
         self.item_ids = self._get_item_ids()
         self.items_dict = self._create_items_dict()
 
@@ -83,9 +83,8 @@ class Items(ApiComponentMixin, AgingMixin):
 class Bazaar(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "skyblock/bazaar",
-                         GLOBAL_CONFIG["items"]["poll_rate"])
-        self._inject_raw_data()
-        self.item_ids = self._get_item_ids(self)
+                         GLOBAL_CONFIG["hypixel_api"]["items"]["poll_rate"])
+        self.item_ids = self._get_item_ids()
         self.items_dict = self._create_items_dict()
         self.property_list = [
             "sellPrice",
@@ -101,21 +100,18 @@ class Bazaar(ApiComponentMixin, AgingMixin):
         ]
 
     def _create_items_dict(self):
-        return dict(zip(self.item_ids, self.raw_data["products"]))
+        return self.raw_data["products"]
 
     def _get_item_ids(self):
-        item_ids = []
-        for i in self.raw_data["products"]:
-            self.item_ids.append(i["product_id"])
-        return item_ids
+        return [x for x in self.raw_data["products"] if not ("ENCHANTMENT" in x or "ESSENCE" in x or x == "BAZAAR_COOKIE")]
 
-    def limit_search(self, bazaar_search):
+    def limit_search(self):
         return BazaarLimitSearch(self)
 
     def _do_limit_search(self, bazaar_search):
         results = []
-        for product in self.raw_data["products"]:
-            product_item = self.api.items.get_item_by_id(product["product_id"])
+        for item_id in self.item_ids:
+            product_item = self.api.items.get_item_by_id(item_id)
             all_match = True
             for limit in bazaar_search.limits:
                 if limit["less_than"]:
@@ -180,15 +176,12 @@ class Item:
     def __init__(self, raw_data):
         self.last_updated = time.time()
         self.raw_data = raw_data
-        self.build()
+        self.build_item()
 
-    def build(self):
+    def build_item(self):
         self.id = self.raw_data["id"]
         self.name = self.raw_data["name"]
         self.material = self.raw_data["material"]
-        self.npc_sell_price = self.raw_data["npc_sell_price"]
-        self.rarity = self.raw_data["tier"]
-        self.category = self.raw_data["category"]
         self.is_in_bazaar = False
         self.is_in_auction_house = False
 
@@ -197,15 +190,15 @@ class BazaarItem(Item):
     def __init__(self, raw_data, bz_data):
         super().__init__(raw_data)
         self.bz_data = bz_data
-        self.build()
+        self.build_bazaar_item()
 
-    def build(self):
+    def build_bazaar_item(self):
         quick_status = self.bz_data["quick_status"]
         self.bz_price = {
             "buy": quick_status["buyPrice"],
             "sell": quick_status["sellPrice"],
             "margin": quick_status["buyPrice"] - quick_status["sellPrice"],
-            "percent_margin": (quick_status["buyPrice"] - quick_status["sellPrice"]) / quick_status["buyPrice"]
+            #"percent_margin": (quick_status["buyPrice"] - quick_status["sellPrice"]) / quick_status["buyPrice"]
         }
         self.bz_volume = {
             "buy": quick_status["buyVolume"],
@@ -229,8 +222,8 @@ class BazaarItem(Item):
         quick_status = self.bz_data["quick_status"]
         if property_name in list(quick_status.keys()):
             return quick_status[property_name]
-        elif property_name == "percentMargin":
-            return self.bz_price["percent_margin"]
+        #elif property_name == "percentMargin":
+        #    return self.bz_price["percent_margin"]
         elif property_name == "margin":
             return self.bz_price["margin"]
 
