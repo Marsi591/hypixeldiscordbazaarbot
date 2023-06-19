@@ -21,6 +21,9 @@ bazaar_data = None
 def f_num(number, decimals=0):
     return f"{round(number, decimals):,}"
 
+def f_coins(number):
+    return "$" + f_num(number, decimals=0)
+
 @bot.event
 async def on_ready():
     await bot.add_cog(BazaarCog(bot))
@@ -40,13 +43,13 @@ class BazaarCog(commands.Cog):
         item = hypixel.items.get_item_by_id(arg)
         embed = discord.Embed(
             title=f"You wanted to know about {item.name} ~?",
-            color=0xffffff
+            color=0xF5A9B8
         )
         embed.set_thumbnail(url=bot.user.avatar.url)
         embed.set_footer(text=time.ctime(time.time()))
         embed.add_field(
             name=item.name,
-            value=f"BUY: {round(item.bz_price['buy'],2):,} coins\nSELL: {round(item.bz_price['sell'],2):,} coins\n7d SALES: {item.bz_moving_week['sell']:,}"
+            value=f"BUY: {f_coins(item.bz_price['buy'])}\nSELL: {f_coins(item.bz_price['sell'])}\n7d SALES: {f_num(item.bz_moving_week['sell'])}"
         )
         await ctx.send(embed=embed)
 
@@ -80,7 +83,7 @@ class BazaarCog(commands.Cog):
         results = new_search.finalize()
         embed = discord.Embed(
             title=random.choice(responses),
-            color=0xb05b48,
+            color=0xF5A9B8,
         )
         embed.set_thumbnail(url=bot.user.avatar.url)
         embed.set_footer(text=time.ctime(time.time()))
@@ -89,7 +92,7 @@ class BazaarCog(commands.Cog):
 
             embed.add_field(
                 name=f"{i.name}",
-                value=f"MARGIN: {math.floor(i.bz_price['margin']):,}\nBUY: {math.floor(i.bz_price['buy']):,}\nSELL: {math.floor(i.bz_price['sell']):,}",
+                value=f"MARGIN: {f_coins(i.bz_price['margin'])}\nBUY: {f_coins(i.bz_price['buy'])}\nSELL: {f_coins(i.bz_price['sell'])}",
                 inline=False
             )
             # await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
