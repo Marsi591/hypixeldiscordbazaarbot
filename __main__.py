@@ -63,7 +63,6 @@ class BazaarCog(commands.Cog):
 
     @commands.command()
     async def brief(self, ctx):
-        await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         new_search = hypixel.bazaar.limit_search()
         new_search.add_limit("margin", False, self.settings["margin"])
         new_search.add_limit("sellVolume", False, self.settings["volume"])
@@ -73,19 +72,18 @@ class BazaarCog(commands.Cog):
             color=0xb05b48,
         )
         embed.set_thumbnail(url=bot.user.avatar.url)
-        
+
         for i in results:
-            
-             
+
             embed.add_field(
-            name=f"{i.name} has a margin of {math.floor(i.bz_price['margin']):,} coins",
-            value=f"BUY: {math.floor(i.bz_price['buy'])} SELL: {math.floor(i.bz_price['sell'])}",
-            inline=True
+                name=f"{i.name} has a margin of {math.floor(i.bz_price['margin']):,} coins",
+                value=f"BUY: {math.floor(i.bz_price['buy'])} SELL: {math.floor(i.bz_price['sell'])}",
+                inline=True
             )
-            #await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
-            #await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
+            # await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
+            # await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
+        await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         await ctx.send(embed=embed)
-        
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):
