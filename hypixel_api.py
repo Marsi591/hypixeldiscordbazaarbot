@@ -79,6 +79,7 @@ class Items(ApiComponentMixin, AgingMixin):
         else:
             raise ValueError(f"Invalid item id {item_id}")
 
+
 class Bazaar(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "skyblock/bazaar",
@@ -95,7 +96,7 @@ class Bazaar(ApiComponentMixin, AgingMixin):
             "buyMovingWeek",
             "buyOrders"
         ]
-    
+
     def _create_items_dict(self):
         return dict(zip(self.item_ids, self.raw_data["products"]))
 
@@ -117,7 +118,7 @@ class Bazaar(ApiComponentMixin, AgingMixin):
                     if not (product[limit["property"]] < limit["value"]):
                         all_match = False
                         break
-                elif not e["less_than"]:
+                elif not limit["less_than"]:
                     if not (product[limit["proprety"]] > limit["value"]):
                         all_match = False
                         break
@@ -223,8 +224,4 @@ class BazaarItem(Item):
 
 
 class AuctionableItem(Item):
-    pass
-
-
-class InvalidItemException(Exception):
     pass
