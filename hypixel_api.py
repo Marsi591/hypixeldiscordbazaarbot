@@ -39,8 +39,8 @@ class AgingMixin:
         self.max_age = max_age
 
     @property
-    def is_aged():
-        return time.time() - creation_date >= self.max_age
+    def is_aged(self):
+        return time.time() - self.creation_date >= self.max_age
 
 
 class ApiComponentMixin:
@@ -83,8 +83,8 @@ class Bazaar(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "skyblock/bazaar",
                          GLOBAL_CONFIG["items"]["poll_rate"])
-        self.item_ids = _get_item_ids(self)
-        self.items_dict = _create_items_dict()
+        self.item_ids = self._get_item_ids(self)
+        self.items_dict = self._create_items_dict()
         self.property_list = [
             "sellPrice",
             "sellVolume",
@@ -163,7 +163,7 @@ class BazaarLimitSearch:
             ValueError("Invalid property to search by")
 
     def finalize(self):
-        return bazaar._do_limit_search(self)
+        return self.bazaar._do_limit_search(self)
 
 
 class AuctionHouse(AgingMixin):
@@ -179,12 +179,12 @@ class Item:
         self.build()
 
     def build(self):
-        self.id = raw_data["id"]
-        self.name = raw_data["name"]
-        self.material = raw_data["material"]
-        self.npc_sell_price = raw_data["npc_sell_price"]
-        self.rarity = raw_data["tier"]
-        self.category = raw_data["category"]
+        self.id = self.raw_data["id"]
+        self.name = self.raw_data["name"]
+        self.material = self.raw_data["material"]
+        self.npc_sell_price = self.raw_data["npc_sell_price"]
+        self.rarity = self.raw_data["tier"]
+        self.category = self.raw_data["category"]
         self.is_in_bazaar = False
         self.is_in_auction_house = False
 
