@@ -68,7 +68,7 @@ class BazaarCog(commands.Cog):
         results = new_search.finalize()
         for i in results:
             await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
-            await ctx.send(f"BUY: {i.bz_price['sell']} SELL: {i.bz_price['sell']}")
+            await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):
