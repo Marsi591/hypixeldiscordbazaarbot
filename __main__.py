@@ -18,6 +18,8 @@ bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 bazaar_data = None
 
+def f_num(number, decimals=0):
+    return f"{round(number, decimals):,}"
 
 @bot.event
 async def on_ready():
