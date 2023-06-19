@@ -1,4 +1,5 @@
 {
+    "prefix" : "%",
     "hypixel_api_key" : "YOUR KEY HERE",
     "discord_token"   : "YOUR TOKEN HERE",
     "hypixel_api" : {

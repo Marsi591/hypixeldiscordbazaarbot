@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import math
 import requests
 import json
+import time
 import config
 import hypixel_api
 
@@ -68,10 +69,11 @@ class BazaarCog(commands.Cog):
         new_search.add_limit("sellVolume", False, self.settings["volume"])
         results = new_search.finalize()
         embed = discord.Embed(
-            title="Bazaar margins",
+            title="Here's your bazaar brief master ~",
             color=0xb05b48,
         )
         embed.set_thumbnail(url=bot.user.avatar.url)
+        embed.set_footer(text=time.ctime(time.time()))
 
         for i in results:
 
@@ -82,7 +84,6 @@ class BazaarCog(commands.Cog):
             )
             # await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
             # await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
-        await ctx.send(f"Here are the current items to look at based on the tracker settings:")
         await ctx.send(embed=embed)
 
     @commands.command()
