@@ -34,11 +34,17 @@ class BazaarCog(commands.Cog):
     @commands.command()
     async def bz(self, ctx, arg):
         item = hypixel.items.get_item_by_id(arg)
-        await ctx.send(f"""{item.name}
-        Buy Price: {item.bz_price["buy"]:,} coins
-        Sell Price: {item.bz_price["sell"]:,} coins
-        Sales in the past 7d: {item.bz_moving_week["sell"]:,} 
-        """)
+        embed = discord.Embed(
+            title=f"You wanted to know about {item.name} ~?",
+            color=0xffffff
+        )
+        embed.set_thumbnail(url=bot.user.avatar.url)
+        embed.set_footer(text=time.ctime(time.time()))
+        embed.add_field(
+            name=item.name,
+            value=f"BUY: {math.floor(item.bz_price['buy']):,} coins\nSELL: {math.floor(item.bz_price['sell']):,} coins\n7d SALES: {math.floor(item.bz_moving_week['sell'])}"
+        )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def margin(self, ctx, ammount, t_type):
@@ -78,9 +84,9 @@ class BazaarCog(commands.Cog):
         for i in results:
 
             embed.add_field(
-                name=f"{i.name} has a margin of {math.floor(i.bz_price['margin']):,} coins",
-                value=f"BUY: {math.floor(i.bz_price['buy'])} SELL: {math.floor(i.bz_price['sell'])}",
-                inline=True
+                name=f"{i.name}",
+                value=f"MARGIN: {math.floor(i.bz_price['margin']):,}\nBUY: {math.floor(i.bz_price['buy']):,}\nSELL: {math.floor(i.bz_price['sell']):,}",
+                inline=False
             )
             # await ctx.send(f"{i.name} has a margin of {i.bz_price['margin']:,} coins")
             # await ctx.send(f"BUY: {i.bz_price['buy']} SELL: {i.bz_price['sell']}")
