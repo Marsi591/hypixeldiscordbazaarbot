@@ -52,26 +52,8 @@ class BazaarCog(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def margin(self, ctx, ammount, t_type):
-        if t_type == "percent":
-            ctx.send(f"Set margin tracker to {ammount}% of the total price.")
-        if t_type == "coins":
-            ctx.send(f"Set margin tracker to {ammount}% coins.")
-
-    @commands.command()
-    async def spike(self, ctx, ammount, t_type):
-        if t_type == "percent":
-            ctx.send(f"Set spike tracker to {ammount}% of the total price.")
-        if t_type == "coins":
-            ctx.send(f"Set spike tracker to {ammount}% coins.")
-
-    @commands.command()
-    async def sell_volume(self, ctx, ammount):
-        ctx.send(f"Set the tacker sell volume to {ammount} sellers.")
-
-    @commands.command()
-    async def buy_volume(self, ctx, ammount):
-        ctx.send(f"Set the tacker buy volume to {ammount} sellers.")
+    async def begin_tracking(self, ctx):
+        pass
 
     @commands.command()
     async def brief(self, ctx):
