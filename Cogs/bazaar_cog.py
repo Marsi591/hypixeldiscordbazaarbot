@@ -1,4 +1,4 @@
-#Imports
+# Imports
 import discord
 import asyncio
 from discord.ext import commands
@@ -8,19 +8,23 @@ import time
 import config
 import hypixel_api
 import random
+import Paginator
+import copy
 
-#Variables
+# Variables
 hypixel = hypixel_api.HypixelApi()
 responses = config.RESPONSES
 bazaar_data = None
 
-#Miscellanious Functions
+# Miscellanious Functions
+
+
 def f_num(number, decimals=0):
     return f"{round(number, decimals):,}"
 
+
 def f_coins(number):
     return "$" + f_num(number, decimals=0)
-
 
 
 class BazaarCog(commands.Cog):
@@ -75,22 +79,29 @@ class BazaarCog(commands.Cog):
         new_search.add_limit("margin", False, self.settings["margin"])
         new_search.add_limit("sellVolume", False, self.settings["volume"])
         results = new_search.finalize()
+        results.sort(key=lambda x: x.bz_price["margin"], reverse=True)
         embed = discord.Embed(
             title=random.choice(responses),
             color=0xF5A9B8,
         )
         embed.set_thumbnail(url=self.bot.user.avatar.url)
         embed.set_footer(text=time.ctime(hypixel.bazaar.creation_date))
-
-        for i in results:
-
-            embed.add_field(
-                name=f"{i.name}",
-                value=f"MARGIN: {f_coins(i.bz_price['margin'])}\nBUY: {f_coins(i.bz_price['buy'])}\nSELL: {f_coins(i.bz_price['sell'])}",
-                inline=False
-            )
-          
-        await ctx.send(embed=embed)
+        embeds = []
+        i=0
+        while i < len(results):
+            new_embed = copy.deepcopy(embed)
+            e=0
+            while e < 3 and i < len(results):
+                item = results[i]
+                new_embed.add_field(
+                    name=f"{item.name}",
+                    value=f"MARGIN: {f_coins(item.bz_price['margin'])}\nBUY: {f_coins(item.bz_price['buy'])}\nSELL: {f_coins(item.bz_price['sell'])}",
+                    inline=False
+                )
+                i+=1
+                e+=1
+            embeds.append(new_embed)
+        await Paginator.Simple().start(ctx, pages=embeds)
 
     @commands.command()
     async def notify_me(self, ctx, item, above_below, price_per_item):

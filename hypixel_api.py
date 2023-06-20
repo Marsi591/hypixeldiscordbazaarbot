@@ -15,21 +15,21 @@ class HypixelApi:
 
     @property
     def items(self):
-        if self._items_obj.is_aged:
+        if self._items_obj.is_aged():
             print("The item database was out of date, refetching...")
             self._items_obj = Items(self)
         return self._items_obj
 
     @property
     def bazaar(self):
-        if self._bazaar_obj.is_aged:
+        if self._bazaar_obj.is_aged():
             print("The bazaar database was out of date, refetching...")
             self._bazaar_obj = Bazaar(self)
         return self._bazaar_obj
 
     @property
     def auction_house(self):
-        if self._auction_house_obj.is_aged:
+        if self._auction_house_obj.is_aged():
             print("The auction house database was out of date, refetching...")
             self._auction_house_obj = AuctionHouse()
         return self._auction_house_object
@@ -39,9 +39,8 @@ class AgingMixin:
     def __init__(self, max_age, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.creation_date = time.time()
-        self.max_age = max_age
+        self.max_age = int(max_age)
 
-    @property
     def is_aged(self):
         return time.time() - self.creation_date >= self.max_age
 
@@ -86,7 +85,7 @@ class Items(ApiComponentMixin, AgingMixin):
 class Bazaar(ApiComponentMixin, AgingMixin):
     def __init__(self, hypixel_api):
         super().__init__(hypixel_api, "skyblock/bazaar",
-                         GLOBAL_CONFIG["hypixel_api"]["items"]["poll_rate"])
+                         GLOBAL_CONFIG["hypixel_api"]["bazaar"]["poll_rate"])
         self.item_ids = self._get_item_ids()
         self.items_dict = self._create_items_dict()
         self.property_list = [

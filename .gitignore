@@ -1,5 +1,5 @@
 config.json
+responses.json
 .venv
 __pycache__
 *.pyc
-responses.json
