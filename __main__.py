@@ -12,20 +12,17 @@ prefix = config.GLOBAL_CONFIG["prefix"]
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 # setup cogs upon bot loading
-
-
 @bot.event
 async def setup_hook():
     for filename in os.listdir("./Cogs"):
         if filename.endswith(".py"):
             await bot.load_extension(f'Cogs.{filename[:-3]}')
 
-
+# Add reset command
 @bot.event
 async def on_ready():
     await bot.add_cog(Reload(bot))
     print('loaded')
-
 
 # Reload cogs command
 class Reload(commands.Cog):

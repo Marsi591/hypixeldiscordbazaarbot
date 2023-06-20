@@ -73,7 +73,7 @@ class BazaarCog(commands.Cog):
         while i < len(results):
             new_embed = copy.deepcopy(embed)
             e=0
-            while e < 3 and i < len(results):
+            while e < 5 and i < len(results):
                 item = results[i]
                 new_embed.add_field(
                     name=f"{item.name}",
