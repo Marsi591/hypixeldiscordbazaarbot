@@ -41,10 +41,5 @@ class Reload(commands.Cog):
         await ctx.send("https://tenor.com/view/aleks-workshop-reloading-reload-gif-20710655")
 
 
-# Loads all of the commands from the "Cogs" folder
-for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs{filename[:-3]}')
-
 # Run bot
 bot.run(config.GLOBAL_CONFIG["discord_token"])
