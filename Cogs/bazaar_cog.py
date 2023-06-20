@@ -40,7 +40,7 @@ class BazaarCog(commands.Cog):
             color=0xF5A9B8
         )
         embed.set_thumbnail(url=self.bot.user.avatar.url)
-        embed.set_footer(text=time.ctime(time.time()))
+        embed.set_footer(text=time.ctime(hypixel.bazaar.creation_date))
         embed.add_field(
             name=item.name,
             value=f"BUY: {f_coins(item.bz_price['buy'])}\nSELL: {f_coins(item.bz_price['sell'])}\n7d SALES: {f_num(item.bz_moving_week['sell'])}"
@@ -80,7 +80,7 @@ class BazaarCog(commands.Cog):
             color=0xF5A9B8,
         )
         embed.set_thumbnail(url=self.bot.user.avatar.url)
-        embed.set_footer(text=time.ctime(time.time()))
+        embed.set_footer(text=time.ctime(hypixel.bazaar.creation_date))
 
         for i in results:
 
