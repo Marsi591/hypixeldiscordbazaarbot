@@ -7,7 +7,7 @@ import time
 import config
 import hypixel_api
 import random
-import Paginator
+import paginator
 import copy
 class AHCog(commands.Cog):
     def __init__(self, bot):
