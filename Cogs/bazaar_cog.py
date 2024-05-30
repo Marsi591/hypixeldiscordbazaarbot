@@ -8,7 +8,7 @@ import time
 import config
 import hypixel_api
 import random
-import Paginator
+import paginator
 import copy
 
 # Variables
